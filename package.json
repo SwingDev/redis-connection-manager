@@ -2,7 +2,7 @@
   "name": "redisconnectionmanager",
   "version": "0.0.1",
   "description": "Redis Connection Manager",
-  "main": "index.js",
+  "main": "./index",
   "author": "SWINGDEV",
   "license": "ISC",
   "scripts": {
