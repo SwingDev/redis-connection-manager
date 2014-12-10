@@ -1,5 +1,5 @@
 {
-  "name": "redisconnectionmanager",
+  "name": "redis-connection-manager",
   "version": "0.0.1",
   "description": "Redis Connection Manager",
   "main": "index.js",
@@ -10,7 +10,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://gabrieloczkowski@bitbucket.org/swingdev/redisconnectionmanager.git"
+    "url": "http://bitbucket.org/swingdev/redis-connection-manager.git"
   },
   "keywords": [
     "redis",
