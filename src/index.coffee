@@ -1,5 +1,10 @@
+_       = require('lodash')
 url     = require('url')
 redis   = require('redis')
+
+ErrorHandler = require('error-handler')
+DbError = ErrorHandler.DbError
+
 
 class RedisConnectionManager
   _connectedClients:          {}
@@ -28,6 +33,7 @@ class RedisConnectionManager
 
     @_createClient redisURL, (err, client) ->
       connectedClientsForURL[id] = client unless err
+      #return unless connectedClientsCallbacksForURL[id]
       for callback in connectedClientsCallbacksForURL[id]
         callback(err, client)
       connectedClientsCallbacksForURL[id] = undefined
@@ -39,11 +45,11 @@ class RedisConnectionManager
     path        = (parsed_url.pathname ? '/').slice 1
     database    = if path.length then path else '0'
 
-    client = redis.createClient parsed_url.port, parsed_url.hostname, { retry_max_delay: 100 }
+    client = redis.createClient parsed_url.port, parsed_url.hostname
 
     if password
       client.auth password, (err) ->
-        cb(err) if err
+        cb createErrorForRedis(err, client) if err
 
     client.select(database)
     client.on 'ready', () ->
@@ -52,4 +58,37 @@ class RedisConnectionManager
       client.send_anyways = false
       cb null, client
 
+    client.on 'error', (err) ->
+      cb createErrorForRedis(err, client)
+      
+
 module.exports = new RedisConnectionManager()
+
+
+
+errCodes = ['ECONNREFUSED', 'ENOTFOUND']
+createErrorForRedis = (err, client) ->
+  return null unless err
+
+  if err.message
+    msg = err.message
+    index = _.findIndex errCodes, (code) ->
+      return msg.indexOf(code) > -1
+    switch index
+      when 0
+        return new RedisError('Connection refused', err, connectionOption: client.connectionOption)
+      when 1
+        return new RedisError('Host not found', err, connectionOption: client.connectionOption)
+      else
+        return new RedisError(null, err, connectionOption: client.connectionOption)
+  else
+    return new RedisError(null, err, connectionOption: client.connectionOption)
+
+
+
+### ###
+# RedisError - universal Redis error's
+class RedisError extends DbError
+
+  name: 'RedisError'
+
