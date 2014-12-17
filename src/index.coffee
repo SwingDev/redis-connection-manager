@@ -1,10 +1,9 @@
-_       = require('lodash')
 url     = require('url')
 redis   = require('redis')
+errors  = require('./errors')
 
-ErrorHandler = require('error-handler')
-DbError = ErrorHandler.DbError
-
+createError = errors.createError
+RedisConnError = errors.RedisConnError
 
 class RedisConnectionManager
   _connectedClients:          {}
@@ -49,7 +48,7 @@ class RedisConnectionManager
 
     if password
       client.auth password, (err) ->
-        cb createErrorForRedis(err, client) if err
+        cb createError(err, client) if err
 
     client.select(database)
     client.on 'ready', () ->
@@ -59,36 +58,8 @@ class RedisConnectionManager
       cb null, client
 
     client.on 'error', (err) ->
-      cb createErrorForRedis(err, client)
-      
-
-module.exports = new RedisConnectionManager()
+      cb createError(err, client)
 
 
-
-errCodes = ['ECONNREFUSED', 'ENOTFOUND']
-createErrorForRedis = (err, client) ->
-  return null unless err
-
-  if err.message
-    msg = err.message
-    index = _.findIndex errCodes, (code) ->
-      return msg.indexOf(code) > -1
-    switch index
-      when 0
-        return new RedisError('Connection refused', err, connectionOption: client.connectionOption)
-      when 1
-        return new RedisError('Host not found', err, connectionOption: client.connectionOption)
-      else
-        return new RedisError(null, err, connectionOption: client.connectionOption)
-  else
-    return new RedisError(null, err, connectionOption: client.connectionOption)
-
-
-
-### ###
-# RedisError - universal Redis error's
-class RedisError extends DbError
-
-  name: 'RedisError'
-
+exports.RedisConnectionManager = new RedisConnectionManager()
+exports.RedisConnError = RedisConnError
