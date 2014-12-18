@@ -1,7 +1,7 @@
 _ = require('lodash')
-ErrorHandler = require('error-handler')
+ErrorHandler  = require('error-handler')
+DbError       = ErrorHandler.DbError
 
-DbError = ErrorHandler.DbError
 errCodes = ['ECONNREFUSED', 'ENOTFOUND']
 
 createError = (err, client) ->
@@ -30,5 +30,7 @@ class RedisError extends DbError
   name: 'RedisError'
 
 
+### ###
+# EXPORTS
 exports.createError = createError
 exports.RedisError = RedisError
