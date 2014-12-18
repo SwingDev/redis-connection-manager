@@ -14,21 +14,21 @@ createError = (err, client) ->
 
     switch index
       when 0
-        return new RedisConnError('Connection refused', err, connectionOption: client.connectionOption)
+        return new RedisError('Connection refused', err, connectionOption: client.connectionOption, 'ECONNREFUSED')
       when 1
-        return new RedisConnError('Host not found', err, connectionOption: client.connectionOption)
+        return new RedisError('Host not found', err, connectionOption: client.connectionOption, 'ENOTFOUND')
       else
-        return new RedisConnError(null, err, connectionOption: client.connectionOption)
+        return new RedisError(null, err, connectionOption: client.connectionOption, 'ERRELSE')
   else
-    return new RedisConnError(null, err, connectionOption: client.connectionOption)
+    return new RedisError(null, err, connectionOption: client.connectionOption, 'ERRELSE')
 
 
 ### ###
-# RedisConnError - universal Redis connection error's
-class RedisConnError extends DbError
+# RedisError - universal Redis error's
+class RedisError extends DbError
 
-  name: 'RedisConnError'
+  name: 'RedisError'
 
 
 exports.createError = createError
-exports.RedisConnError = RedisConnError
+exports.RedisError = RedisError

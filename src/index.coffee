@@ -3,7 +3,7 @@ redis   = require('redis')
 errors  = require('./errors')
 
 createError = errors.createError
-RedisConnError = errors.RedisConnError
+RedisError = errors.RedisError
 
 class RedisConnectionManager
   _connectedClients:          {}
@@ -62,4 +62,4 @@ class RedisConnectionManager
 
 
 exports.RedisConnectionManager = new RedisConnectionManager()
-exports.RedisConnError = RedisConnError
+exports.RedisError = RedisError
