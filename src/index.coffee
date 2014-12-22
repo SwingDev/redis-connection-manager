@@ -32,7 +32,7 @@ class RedisConnectionManager
 
     @_createClient redisURL, (err, client) ->
       connectedClientsForURL[id] = client unless err
-      #return unless connectedClientsCallbacksForURL[id]
+      return unless connectedClientsCallbacksForURL[id]
       for callback in connectedClientsCallbacksForURL[id]
         callback(err, client)
       connectedClientsCallbacksForURL[id] = undefined
