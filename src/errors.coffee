@@ -1,5 +1,5 @@
 _ = require('lodash')
-ErrorHandler  = require('error-handler')
+ErrorHandler  = require.main.require('error-handler')
 DbError       = ErrorHandler.DbError
 
 errCodes = ['ECONNREFUSED', 'ENOTFOUND']
