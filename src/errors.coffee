@@ -18,7 +18,7 @@ createError = (err, client) ->
       when 1
         return new RedisError('Host not found', err, connectionOption: client.connectionOption, 'ENOTFOUND')
       else
-        return new RedisError(null, err, connectionOption: client.connectionOption, 'ERRELSE')
+        return new RedisError(msg, err, connectionOption: client.connectionOption, 'ERRELSE')
   else
     return new RedisError(null, err, connectionOption: client.connectionOption, 'ERRELSE')
 
