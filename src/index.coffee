@@ -72,7 +72,8 @@ class RedisConnectionManager
 
     if password
       client.auth password, (err) ->
-        cb createError(err, client) if err
+        return cb createError(err, client) if err
+        cb null
 
     client.select(database)
     client.on 'ready', () ->
@@ -82,7 +83,8 @@ class RedisConnectionManager
       cb null, client
 
     client.on 'error', (err) ->
-      cb createError(err, client)
+      return cb createError(err, client) if err
+      cb null
 
 
 ### ###
