@@ -71,21 +71,23 @@ class RedisConnectionManager
     client = redis.createClient parsed_url.port, parsed_url.hostname
 
     if password
-      client.auth password, (err) ->
+      client.auth password, (err) =>
         return cb createError(err, client) if err
-        cb null
+        @_afterConnectionAndAuth client, database, cb
+    else
+      @_afterConnectionAndAuth client, database, cb
 
-    client.select(database)
-    client.on 'ready', () ->
+  _afterConnectionAndAuth: (client, database, cb) ->
+    client.select database
+    client.on 'ready', ->
       client.send_anyways = true
-      client.select(database)
+      client.select database
       client.send_anyways = false
       cb null, client
 
     client.on 'error', (err) ->
       return cb createError(err, client) if err
       cb null
-
 
 ### ###
 # EXPORTS
